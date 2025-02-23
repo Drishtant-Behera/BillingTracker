@@ -1,0 +1,10 @@
+{
+    "date": "2024-03-28",
+    "amount": 579.0,
+    "payment_mode_id": "Debit Card",
+    "vendor": "cerebronics technology private limited sujit kumar behera",
+    "vendor_gstin": null,
+    "invoice_number": "BLR8-3833559",
+    "paid_by_id": null,
+    "gst_or_nongst": false
+}
