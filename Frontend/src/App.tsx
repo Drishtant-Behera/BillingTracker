@@ -4,6 +4,7 @@ import { User } from '@supabase/supabase-js';
 import { supabase } from './lib/supabase';
 import Navigation from './components/Navigation';
 import BillingForm from './components/BillingForm';
+import AIBillingForm from './components/AIBillingForm';
 import BillingRecords from './components/BillingRecords';
 import AccountSettings from './components/AccountSettings';
 import Dashboard from './components/Dashboard';
@@ -48,6 +49,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/new" element={<BillingForm />} />
+            <Route path="/new/ai" element={<AIBillingForm />} />
             <Route path="/records" element={<BillingRecords />} />
             <Route path="/settings" element={<AccountSettings />} />
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -58,4 +60,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

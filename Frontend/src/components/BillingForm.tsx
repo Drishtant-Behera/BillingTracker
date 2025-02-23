@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { supabase, handleSupabaseError } from '../lib/supabase';
 import { uploadToS3 } from '../lib/s3';
 import { FileText } from 'lucide-react';
@@ -10,21 +11,26 @@ import { StoragePathSelector } from './billing-form/StoragePathSelector';
 type BillingFormData = Omit<BillingRecord, 'id' | 'created_at' | 'updated_at'>;
 
 export default function BillingForm() {
+  const location = useLocation();
+  const prefillData = location.state?.prefillData;
+  const uploadedFile = location.state?.uploadedFile;
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [paymentModes, setPaymentModes] = useState<PaymentMode[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(uploadedFile || null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState<BillingFormData>({
-    date: new Date().toISOString().split('T')[0],
-    amount: 0,
-    payment_mode_id: '',
-    vendor: '',
-    vendor_gstin: '',
-    invoice_number: '',
-    paid_by_id: '',
-    category_id: '',
-    gst_or_nongst: false,
+    date: prefillData?.date || new Date().toISOString().split('T')[0],
+    amount: prefillData?.amount || 0,
+    payment_mode_id: prefillData?.payment_mode_id || '',
+    vendor: prefillData?.vendor || '',
+    vendor_gstin: prefillData?.vendor_gstin || '',
+    invoice_number: prefillData?.invoice_number || '',
+    paid_by_id: prefillData?.paid_by_id || '',
+    category_id: prefillData?.category_id || '',
+    gst_or_nongst: prefillData?.gst_or_nongst || false,
     bill_url: null,
     storage_path: null
   });
@@ -67,9 +73,20 @@ export default function BillingForm() {
 
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
+
+      // Upload the file immediately
+      setIsUploading(true);
+      if (formData.storage_path) {
+        const billUrl = await uploadToS3(file, formData.storage_path);
+        setFormData(prev => ({ ...prev, bill_url: billUrl }));
+      } else {
+        throw new Error('Please select a storage path first');
+      }
     } catch (error: any) {
       alert(error.message);
       event.target.value = '';
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -88,6 +105,7 @@ export default function BillingForm() {
       URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
     }
+    setFormData(prev => ({ ...prev, bill_url: null }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,22 +113,9 @@ export default function BillingForm() {
     setIsSubmitting(true);
 
     try {
-      if (!formData.storage_path) {
-        throw new Error('Please select a storage path');
-      }
-
-      let billUrl = null;
-      if (selectedFile) {
-        try {
-          billUrl = await uploadToS3(selectedFile, formData.storage_path);
-        } catch (error: any) {
-          throw new Error(`Failed to upload image: ${error.message}`);
-        }
-      }
-
       const { error } = await supabase
         .from('billing_records')
-        .insert([{ ...formData, bill_url: billUrl }]);
+        .insert([formData]);
 
       if (error) throw error;
 
@@ -142,17 +147,10 @@ export default function BillingForm() {
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <div className="flex items-center gap-2 mb-6">
         <FileText className="w-6 h-6 text-blue-600" />
-        <h2 className="text-2xl font-bold text-gray-800">New Billing Record</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Manual Billing Form</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <FormFields
-          formData={formData}
-          setFormData={setFormData}
-          categories={categories}
-          paymentModes={paymentModes}
-        />
-
         <StoragePathSelector
           value={formData.storage_path || ''}
           onChange={(path) => setFormData({ ...formData, storage_path: path })}
@@ -165,12 +163,20 @@ export default function BillingForm() {
           handleCameraCapture={handleCameraCapture}
           clearSelectedFile={clearSelectedFile}
           previewUrl={previewUrl}
+          isUploading={isUploading}
+        />
+
+        <FormFields
+          formData={formData}
+          setFormData={setFormData}
+          categories={categories}
+          paymentModes={paymentModes}
         />
 
         <div className="mt-6">
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isUploading}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
           >
             {isSubmitting ? 'Saving...' : 'Save Record'}
