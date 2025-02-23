@@ -1,0 +1,49 @@
+# Virtual environment
+.venv/
+env/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+
+# Environment variables (keep secrets out of Git)
+.env
+
+# Database & Migrations (ignore migrations but keep backend)
+migrations/
+database/
+*.db
+*.sqlite
+*.sql
+
+# Ignore processed invoice data
+processed_json/
+
+# Ignore ports and runtime files
+*.sock
+*.pid
+*.port
+
+# Node.js (if used for frontend)
+node_modules/
+dist/
+build/
+
+# IDE & OS-Specific Files
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Ignore Specific Files
+BillingTracker/Frontend/supabase*
+!BillingTracker/Frontend/supabase/.gitkeep
+
+BillingTracker/Parser/bill_test.png
+BillingTracker/Parser/bill2_test.png
