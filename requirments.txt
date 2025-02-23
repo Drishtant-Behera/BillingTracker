@@ -1,15 +1,11 @@
-# Async handling and server
+# FastAPI and ASGI server
 fastapi
 uvicorn
 
 # Parsing dependencies
-asyncio
-nest-asyncio
 pillow
-pytesseract
 pdf2image
 docling
-llama-parse
 
 # LLM and LangChain
 torch
@@ -19,9 +15,15 @@ requests
 
 # Database and JSON handling
 sqlalchemy
-psycopg2-binary  # For PostgreSQL (used with Supabase)
+psycopg2-binary  # PostgreSQL for Supabase
 pandas
-python-dotenv  # For environment variable management
+python-dotenv  # For managing environment variables
+
+# Supabase Integration
+supabase
 
 # Additional utilities
 httpx
+asyncio
+nest-asyncio
+shutil
