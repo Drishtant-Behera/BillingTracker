@@ -6,6 +6,7 @@ import Navigation from './components/Navigation';
 import BillingForm from './components/BillingForm';
 import BillingRecords from './components/BillingRecords';
 import AccountSettings from './components/AccountSettings';
+import Dashboard from './components/Dashboard';
 import LoginForm from './components/auth/LoginForm';
 
 function App() {
@@ -45,7 +46,8 @@ function App() {
         <Navigation user={user} />
         <main className="py-10">
           <Routes>
-            <Route path="/" element={<BillingForm />} />
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/new" element={<BillingForm />} />
             <Route path="/records" element={<BillingRecords />} />
             <Route path="/settings" element={<AccountSettings />} />
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -56,4 +58,4 @@ function App() {
   );
 }
 
-export default App;
+export default App

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FileText, Table, LogOut, Settings, Menu, X } from 'lucide-react';
+import { FileText, Table, LogOut, Settings, Menu, X, LayoutDashboard } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
 import { signOut } from '../lib/auth';
 
@@ -26,6 +26,18 @@ export default function Navigation({ user }: NavigationProps) {
         to="/"
         className={`flex items-center px-4 py-2 text-sm font-medium ${
           location.pathname === '/'
+            ? 'text-blue-600 bg-blue-50'
+            : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+        }`}
+        onClick={() => setIsSidebarOpen(false)}
+      >
+        <LayoutDashboard className="w-5 h-5 mr-3" />
+        Dashboard
+      </Link>
+      <Link
+        to="/new"
+        className={`flex items-center px-4 py-2 text-sm font-medium ${
+          location.pathname === '/new'
             ? 'text-blue-600 bg-blue-50'
             : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
         }`}
