@@ -1,0 +1,27 @@
+# Async handling and server
+fastapi
+uvicorn
+
+# Parsing dependencies
+asyncio
+nest-asyncio
+pillow
+pytesseract
+pdf2image
+docling
+llama-parse
+
+# LLM and LangChain
+torch
+langchain
+langchain-ollama
+requests
+
+# Database and JSON handling
+sqlalchemy
+psycopg2-binary  # For PostgreSQL (used with Supabase)
+pandas
+python-dotenv  # For environment variable management
+
+# Additional utilities
+httpx
