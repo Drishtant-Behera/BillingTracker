@@ -11,8 +11,10 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: true,
-    flowType: 'pkce'
+    detectSessionInUrl: false,
+    flowType: 'pkce',
+    storage: localStorage,
+    storageKey: 'supabase.auth.token'
   },
   db: {
     schema: 'public'
@@ -51,6 +53,9 @@ export const handleSupabaseError = (error: any) => {
   }
   if (error.code === 'auth/weak-password') {
     return 'Password is too weak.';
+  }
+  if (error.code === 'session_not_found') {
+    return 'Your session has expired. Please sign in again.';
   }
   return error.message || 'An unexpected error occurred';
 };
