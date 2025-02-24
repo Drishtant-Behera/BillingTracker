@@ -1,17 +1,25 @@
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 import shutil
 import os
 import json
 import csv
 import supabase
-from parser.main import process_file
+from Parser.main import process_file  # Updated import to match new structure
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 
+# Supabase credentials
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
+# Initialize Supabase client
 supabase_client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = FastAPI()
